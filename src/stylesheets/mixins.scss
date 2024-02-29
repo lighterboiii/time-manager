@@ -16,3 +16,19 @@
   margin: $margin;
   padding: $padding;
 }
+
+@mixin position($position, $top: false, $right: false, $bottom: false, $left: false) {
+  position: $position;
+  @if $top {
+    top: $top;
+  }
+  @if $right {
+    right: $right;
+  }
+  @if $bottom {
+    bottom: $bottom;
+  }
+  @if $left {
+    left: $left;
+  }
+}

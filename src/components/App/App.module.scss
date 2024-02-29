@@ -1,8 +1,40 @@
+@use '../../stylesheets/mixins.scss' as *;
+
 * {
-  margin: 0 auto;
-  padding: 0;
+  @include indents();
+  box-sizing: border-box
 }
 
 .app {
+  @include position(relative);
+  @include flexContainer(column, space-between, center, 10px);
   text-align: center;
+  height: 100vh;
+
+  &__buttons {
+    @include flexContainer(row, space-between, center, 16px);
+    @include indents(20px, 0);
+  }
+
+  &__input {
+    @include indents(20px 16px, 0);
+    border-radius: 10px;
+    border: 1px black solid;
+    width: 30%;
+
+    &::placeholder {
+      color: black;
+      opacity: .8;
+    }
+  }
+
+  &__inputWrapper {
+    @include indents(40px 0 20px 0, 0);
+    width: 100%;
+  }
+
+  &__alert {
+    @include position(absolute, $top: 120px, $left: 50%);
+    transform: translate(-50%);
+  }
 }
