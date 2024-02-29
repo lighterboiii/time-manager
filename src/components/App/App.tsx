@@ -1,6 +1,6 @@
 import styles from './App.module.scss';
 import Timer from '../Timer/Timer';
-import { ChangeEvent, FC, useEffect, useState } from 'react';
+import { ChangeEvent, FC, useEffect, useState, KeyboardEvent } from 'react';
 import Button from '../../ui/Button/Button';
 
 const App: FC = () => {
@@ -53,6 +53,13 @@ const App: FC = () => {
       setFirstTimerTime(null);
       setSecondTimerTime(null);
       setCurrentTimer(1);
+      localStorage.clear();
+    }
+  };
+
+  const handleEnterPress = (event: KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === 'Enter') {
+      handleStart();
     }
   };
 
@@ -107,6 +114,7 @@ const App: FC = () => {
           onChange={handleInputChange}
           className={styles.app__input}
           placeholder="Введите время в минутах"
+          onKeyDown={handleEnterPress}
         />
       </div>
       {currentTimer === 1 && firstTimerTime !== null && <Timer time={firstTimerTime} isPaused={isPaused} />}
@@ -120,14 +128,11 @@ const App: FC = () => {
         <Button
           text="Пауза/Продолжить"
           handleClick={handlePause}
-          // disabled={(firstTimer === null && inputValue === '') || 
-          // (secondTimer === null && inputValue === '')}
         />
         <Button
           text="Старт/Стоп"
           handleClick={handleStart}
-          // disabled={(firstTimer === null && inputValue === '') || 
-          // (secondTimer === null && inputValue === '')}
+          type="submit"
         />
         <Button
           text="Переключить таймер"

@@ -5,12 +5,13 @@ interface IBtn {
   text: string;
   handleClick: () => void;
   disabled?: boolean;
+  type?: "button" | "submit" | "reset";
 }
 
-const Button: FC<IBtn> = ({ text, handleClick, disabled }) => {
+const Button: FC<IBtn> = ({ text, handleClick, disabled, type = "button" }) => {
   return (
     <button
-      type="button"
+      type={type}
       onClick={handleClick}
       className={styles.button}
       disabled={disabled}
