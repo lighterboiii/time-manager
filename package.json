@@ -1,5 +1,6 @@
 {
   "name": "react-timer",
+  "homepage": "https://lighterboiii.github.io/time-manager/",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
