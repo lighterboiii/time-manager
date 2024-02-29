@@ -5,19 +5,83 @@ import Button from '../../ui/Button/Button';
 import { setDelay } from '../../utils/setDelay';
 
 const App: FC = () => {
-  const [time, setTime] = useState('');
-  const [currentTimer, setCurrentTimer] = useState(false);
-  const [isTimerSwitching, setTimerSwitching] = useState(false);
-
+  const [inputValue, setInputValue] = useState<string>('');
+  const [currentTimer, setCurrentTimer] = useState(1);
+  const [firstTimer, setFirstTimer] = useState<NodeJS.Timeout | null>(null);
+  const [secondTimer, setSecondTimer] = useState<NodeJS.Timeout | null>(null);
+  const [firstTimerTime, setFirstTimerTime] = useState<number | null>(null);
+  const [secondTimerTime, setSecondTimerTime] = useState<number | null>(null);
+  const [isPaused, setIsPaused] = useState(false);
+  
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setTime(e.target.value);
+    setInputValue(e.target.value);
+  };
+  console.log(firstTimerTime);
+  console.log(secondTimerTime);
+
+  const handleSwitchTimer = () => {
+    setCurrentTimer(prevTimer => prevTimer === 1 ? 2 : 1);
+    setFirstTimer(null);
+    setSecondTimer(null);
+    setIsPaused(false);
   };
 
-  const handleSwitchTimer = async () => {
-    setTimerSwitching(!isTimerSwitching);
-    await setDelay(1000);
-    setCurrentTimer(!currentTimer);
-    setTimerSwitching(false);
+  const handleStart = () => {
+    if (inputValue !== '') {
+      if (currentTimer === 1) {
+        clearInterval(firstTimer!);
+        setFirstTimer(null);
+        setFirstTimerTime(parseInt(inputValue) * 60);
+        setSecondTimerTime(null);
+        setCurrentTimer(1);
+        setFirstTimer(setInterval(() => {
+          setFirstTimerTime((prevTime) => (prevTime !== null ? prevTime - 1 : null));
+        }, 1000));
+      } else {
+        clearInterval(secondTimer!);
+        setSecondTimer(null);
+        setSecondTimerTime(parseInt(inputValue) * 60);
+        setFirstTimerTime(null);
+        setCurrentTimer(2);
+        setSecondTimer(setInterval(() => {
+          setSecondTimerTime((prevTime) => (prevTime !== null ? prevTime - 1 : null));
+        }, 1000));
+      }
+      setInputValue('');
+    } else {
+      clearInterval(firstTimer!);
+      clearInterval(secondTimer!);
+      setFirstTimer(null);
+      setSecondTimer(null);
+      setFirstTimerTime(null);
+      setSecondTimerTime(null);
+      setCurrentTimer(1);
+    }
+  };
+
+  const handlePause = () => {
+    if (currentTimer === 1) {
+      if (!isPaused && firstTimer) {
+        clearInterval(firstTimer);
+        setIsPaused(true);
+        setFirstTimerTime(firstTimerTime);
+      } else {
+        setFirstTimer(setInterval(() => {
+          setFirstTimerTime((prevTime) => (prevTime !== null ? prevTime - 1 : null));
+        }, 1000));
+        setIsPaused(false);
+      }
+    } else {
+      if (secondTimer && !isPaused) {
+        clearInterval(secondTimer);
+        setIsPaused(true);
+      } else {
+        setSecondTimer(setInterval(() => {
+          setSecondTimerTime((prevTime) => (prevTime !== null ? prevTime - 1 : null));
+        }, 1000));
+        setIsPaused(false);
+      }
+    }
   };
 
   return (
@@ -27,20 +91,24 @@ const App: FC = () => {
           type="number"
           name="time"
           id="time"
-          value={time}
+          value={inputValue}
           onChange={handleInputChange}
           className={styles.app__input}
           placeholder="Введите время в минутах"
         />
       </div>
-      {isTimerSwitching && <h2 className={styles.app__alert}>
-        Активируем таймер номер {currentTimer ? 1 : 2}
-        </h2>}
-      {currentTimer && <Timer />}
-      {!currentTimer && <Timer />}
+      <h2 className={styles.app__alert}>
+        Активен таймер номер {currentTimer}
+      </h2>
+      {currentTimer === 1 && firstTimerTime !== null && <Timer time={firstTimerTime} isPaused={isPaused} />}
+      {currentTimer === 2 && secondTimerTime !== null && <Timer time={secondTimerTime} isPaused={isPaused} />}
       <div className={styles.app__buttons}>
-        <Button text="Старт/Стоп" handleClick={() => { }} />
-        <Button text="Пауза/Продолжить" handleClick={() => { }} />
+        <Button text="Пауза/Продолжить" handleClick={handlePause} />
+        <Button
+          text="Старт/Стоп"
+          handleClick={handleStart}
+          // disabled={!inputValue}
+        />
         <Button text="Переключить таймер" handleClick={handleSwitchTimer} />
       </div>
     </div>

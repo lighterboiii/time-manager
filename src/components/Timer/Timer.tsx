@@ -1,25 +1,34 @@
 import { FC, useEffect, useState } from "react";
 import styles from './Timer.module.scss';
 
-const Timer: FC = () => {
-  const [minutes, setMinutes] = useState(59);
-  const [seconds, setSeconds] = useState(59);
+interface ITimer {
+  time: number | null;
+  isPaused: boolean;
+}
+
+const Timer: FC<ITimer> = ({ time, isPaused }) => {
+  const [minutes, setMinutes] = useState(Math.floor(time! / 60));
+  const [seconds, setSeconds] = useState(time! % 60);
+  console.log(seconds);
+  console.log(minutes);
 
   useEffect(() => {
     const interval = setInterval(() => {
-      if (seconds === 0) {
-        if (minutes === 0) {
-          clearInterval(interval);
+      if (!isPaused) {
+        if (seconds === 0) {
+          if (minutes === 0) {
+            clearInterval(interval);
+          } else {
+            setMinutes(prevState => prevState - 1);
+            setSeconds(59);
+          }
         } else {
-          setMinutes(prevState => prevState - 1);
-          setSeconds(60);
+          setSeconds(prevState => prevState - 1);
         }
-      } else {
-        setSeconds(prevState => prevState - 1);
       }
     }, 1000);
     return () => clearInterval(interval);
-  }, [minutes, seconds]);
+  }, [minutes, seconds, isPaused]);
 
   return (
     <div className={styles.timer}>
