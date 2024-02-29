@@ -1,0 +1,20 @@
+@use '../../stylesheets/mixins.scss' as *;
+
+.timer {
+  @include indents();
+  @include flexContainer(column, center, center);
+  height: 100vh;
+
+  &__time {
+    font-size: 230px;
+    font-weight: 900;
+
+    @media screen and (max-width: 859px) {
+      font-size: 144px;
+    }
+
+    @media screen and (max-width: 430px) {
+      font-size: 100px;
+    }
+  }
+}
