@@ -11,8 +11,12 @@
   text-align: center;
   height: 100vh;
 
+  @media screen and (max-width: 1024px) {
+    @include indents(0 10px,0);
+  }
+
   &__buttons {
-    @include flexContainer(row, space-between, center, 16px);
+    @include flexContainer(row, space-between, center, 8px);
     @include indents(20px 0 40px 0, 0);
 
     @media screen and (max-width: 580px) {
@@ -30,7 +34,7 @@
     @include indents(20px 16px, 0);
     border-radius: 10px;
     border: 1px black solid;
-    width: 30%;
+    width: 35%;
 
     &::placeholder {
       color: black;
@@ -38,7 +42,7 @@
     }
 
     @media screen and (max-width: 1024px) {
-      width: 70%;
+      width: 100%;
     }
   }
 
