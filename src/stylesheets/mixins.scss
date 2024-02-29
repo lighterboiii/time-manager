@@ -32,3 +32,9 @@
     left: $left;
   }
 }
+
+@mixin infoTextStyle() {
+  font-size: 24px;
+  font-weight: 400;
+  color: rgb(52, 52, 52);
+}

@@ -1,9 +1,9 @@
-import styles from './App.module.scss';
+import styles from './TimeManager.module.scss';
 import Timer from '../Timer/Timer';
 import { ChangeEvent, FC, useEffect, useState, KeyboardEvent } from 'react';
 import Button from '../../ui/Button/Button';
 
-const App: FC = () => {
+const TimeManager: FC = () => {
   const [inputValue, setInputValue] = useState<string>('');
   const [currentTimer, setCurrentTimer] = useState(1);
   const [firstTimer, setFirstTimer] = useState<NodeJS.Timeout | null>(null);
@@ -11,6 +11,7 @@ const App: FC = () => {
   const [firstTimerTime, setFirstTimerTime] = useState<number | null>(null);
   const [secondTimerTime, setSecondTimerTime] = useState<number | null>(null);
   const [isPaused, setIsPaused] = useState(false);
+  const [timerSwitchedMessageVisible, setTimerSwitchedMessageVisible] = useState(false);
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     setInputValue(e.target.value);
@@ -21,6 +22,10 @@ const App: FC = () => {
     setFirstTimer(null);
     setSecondTimer(null);
     setIsPaused(false);
+    setTimerSwitchedMessageVisible(true);
+    setTimeout(() => {
+      setTimerSwitchedMessageVisible(false);
+    }, 1000)
   };
 
   const handleStart = () => {
@@ -29,7 +34,6 @@ const App: FC = () => {
         clearInterval(firstTimer!);
         setFirstTimer(null);
         setFirstTimerTime(parseInt(inputValue) * 60);
-        setSecondTimerTime(null);
         setCurrentTimer(1);
         setFirstTimer(setInterval(() => {
           setFirstTimerTime((prevTime) => (prevTime !== null ? prevTime - 1 : null));
@@ -38,7 +42,6 @@ const App: FC = () => {
         clearInterval(secondTimer!);
         setSecondTimer(null);
         setSecondTimerTime(parseInt(inputValue) * 60);
-        setFirstTimerTime(null);
         setCurrentTimer(2);
         setSecondTimer(setInterval(() => {
           setSecondTimerTime((prevTime) => (prevTime !== null ? prevTime - 1 : null));
@@ -104,27 +107,31 @@ const App: FC = () => {
   }, [firstTimerTime, secondTimerTime, currentTimer]);
 
   return (
-    <div className={styles.app}>
-      <div className={styles.app__inputWrapper}>
+    <div className={styles.timeManager}>
+      <div className={styles.timeManager__inputWrapper}>
         <input
           type="number"
           name="time"
           id="time"
           value={inputValue}
           onChange={handleInputChange}
-          className={styles.app__input}
+          className={styles.timeManager__input}
           placeholder="Введите время в минутах"
           onKeyDown={handleEnterPress}
         />
       </div>
+      {timerSwitchedMessageVisible &&
+        <div className={styles.timeManager__alert}>
+          {currentTimer === 1 ? 'Первый таймер включен' : 'Второй таймер включен'}
+        </div>}
       {currentTimer === 1 && firstTimerTime !== null && <Timer time={firstTimerTime} isPaused={isPaused} />}
       {currentTimer === 2 && secondTimerTime !== null && <Timer time={secondTimerTime} isPaused={isPaused} />}
       {(firstTimerTime === null && secondTimerTime === null) &&
-        <div className={styles.app__infoText}>
+        <div className={styles.timeManager__infoText}>
           В поле ввода введите минуты для отсчета и нажмите кнопку "Старт/Cтоп" для запуска таймера
         </div>
       }
-      <div className={styles.app__buttons}>
+      <div className={styles.timeManager__buttons}>
         <Button
           text="Пауза/Продолжить"
           handleClick={handlePause}
@@ -143,4 +150,4 @@ const App: FC = () => {
   );
 }
 
-export default App;
+export default TimeManager;

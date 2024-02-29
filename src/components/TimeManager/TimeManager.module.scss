@@ -5,7 +5,7 @@
   box-sizing: border-box
 }
 
-.app {
+.timeManager {
   @include position(relative);
   @include flexContainer(column, space-between, center, 10px);
   text-align: center;
@@ -43,8 +43,12 @@
   }
 
   &__infoText {
-    font-size: 24px;
-    font-weight: 400;
-    color: rgb(52, 52, 52);
+    @include infoTextStyle()
+  }
+
+  &__alert {
+    @include position(absolute, $top: 20%, $left: 50%);
+    transform: translate(-50%);
+    @include infoTextStyle()
   }
 }
