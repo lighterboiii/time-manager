@@ -2,7 +2,6 @@ import styles from './App.module.scss';
 import Timer from '../Timer/Timer';
 import { ChangeEvent, FC, useState } from 'react';
 import Button from '../../ui/Button/Button';
-import { setDelay } from '../../utils/setDelay';
 
 const App: FC = () => {
   const [inputValue, setInputValue] = useState<string>('');
@@ -12,12 +11,10 @@ const App: FC = () => {
   const [firstTimerTime, setFirstTimerTime] = useState<number | null>(null);
   const [secondTimerTime, setSecondTimerTime] = useState<number | null>(null);
   const [isPaused, setIsPaused] = useState(false);
-  
+
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     setInputValue(e.target.value);
   };
-  console.log(firstTimerTime);
-  console.log(secondTimerTime);
 
   const handleSwitchTimer = () => {
     setCurrentTimer(prevTimer => prevTimer === 1 ? 2 : 1);
@@ -97,19 +94,28 @@ const App: FC = () => {
           placeholder="Введите время в минутах"
         />
       </div>
-      <h2 className={styles.app__alert}>
-        Активен таймер номер {currentTimer}
-      </h2>
       {currentTimer === 1 && firstTimerTime !== null && <Timer time={firstTimerTime} isPaused={isPaused} />}
       {currentTimer === 2 && secondTimerTime !== null && <Timer time={secondTimerTime} isPaused={isPaused} />}
+      {(firstTimerTime === null && secondTimerTime === null) &&
+        <div className={styles.app__infoText}>
+          В поле ввода введите минуты для отсчета и нажмите кнопку "Старт/Cтоп" для запуска таймера
+        </div>
+      }
       <div className={styles.app__buttons}>
-        <Button text="Пауза/Продолжить" handleClick={handlePause} />
+        <Button
+          text="Пауза/Продолжить"
+          handleClick={handlePause}
+          disabled={inputValue === ''}
+        />
         <Button
           text="Старт/Стоп"
           handleClick={handleStart}
-          // disabled={!inputValue}
+          disabled={inputValue === ''}
         />
-        <Button text="Переключить таймер" handleClick={handleSwitchTimer} />
+        <Button
+          text="Переключить таймер"
+          handleClick={handleSwitchTimer}
+        />
       </div>
     </div>
   );
