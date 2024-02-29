@@ -30,10 +30,13 @@ const TimeManager: FC = () => {
 
   const handleStart = () => {
     if (inputValue !== '') {
+      const timeInMinutes = parseFloat(inputValue);
+      const timeInSeconds = timeInMinutes * 60;
+      
       if (currentTimer === 1) {
         clearInterval(firstTimer!);
         setFirstTimer(null);
-        setFirstTimerTime(parseInt(inputValue) * 60);
+        setFirstTimerTime(timeInSeconds);
         setCurrentTimer(1);
         setFirstTimer(setInterval(() => {
           setFirstTimerTime((prevTime) => (prevTime !== null ? prevTime - 1 : null));
@@ -41,7 +44,7 @@ const TimeManager: FC = () => {
       } else {
         clearInterval(secondTimer!);
         setSecondTimer(null);
-        setSecondTimerTime(parseInt(inputValue) * 60);
+        setSecondTimerTime(timeInSeconds);
         setCurrentTimer(2);
         setSecondTimer(setInterval(() => {
           setSecondTimerTime((prevTime) => (prevTime !== null ? prevTime - 1 : null));
