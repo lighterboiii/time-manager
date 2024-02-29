@@ -32,7 +32,7 @@ const Timer: FC<ITimer> = ({ time, isPaused }) => {
 
   return (
     <div className={styles.timer}>
-      <h1 className={styles.timer__time}>{`${minutes.toString()}:${seconds.toString()}`}</h1>
+      <h1 className={styles.timer__time}>{`${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`}</h1>
     </div>
   )
 };

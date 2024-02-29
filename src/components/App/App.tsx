@@ -1,6 +1,6 @@
 import styles from './App.module.scss';
 import Timer from '../Timer/Timer';
-import { ChangeEvent, FC, useState } from 'react';
+import { ChangeEvent, FC, useEffect, useState } from 'react';
 import Button from '../../ui/Button/Button';
 
 const App: FC = () => {
@@ -81,6 +81,21 @@ const App: FC = () => {
     }
   };
 
+  useEffect(() => {
+    const firstTimerStore = localStorage.getItem('timer1Time');
+    const secondTimerStroe = localStorage.getItem('timer2Time');
+    const currentTimerStore = localStorage.getItem('currentTimer');
+    if (firstTimerStore !== null) setFirstTimerTime(Number(firstTimerStore));
+    if (secondTimerStroe !== null) setSecondTimerTime(Number(secondTimerStroe));
+    if (currentTimerStore !== null) setCurrentTimer(Number(currentTimerStore));
+  }, []);
+
+  useEffect(() => {
+    if (firstTimerTime !== null) localStorage.setItem('timer1Time', firstTimerTime.toString());
+    if (secondTimerTime !== null) localStorage.setItem('timer2Time', secondTimerTime.toString());
+    localStorage.setItem('currentTimer', currentTimer.toString());
+  }, [firstTimerTime, secondTimerTime, currentTimer]);
+
   return (
     <div className={styles.app}>
       <div className={styles.app__inputWrapper}>
@@ -105,12 +120,14 @@ const App: FC = () => {
         <Button
           text="Пауза/Продолжить"
           handleClick={handlePause}
-          disabled={inputValue === ''}
+          // disabled={(firstTimer === null && inputValue === '') || 
+          // (secondTimer === null && inputValue === '')}
         />
         <Button
           text="Старт/Стоп"
           handleClick={handleStart}
-          disabled={inputValue === ''}
+          // disabled={(firstTimer === null && inputValue === '') || 
+          // (secondTimer === null && inputValue === '')}
         />
         <Button
           text="Переключить таймер"
