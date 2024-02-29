@@ -21,6 +21,7 @@
 
     @media screen and (max-width: 580px) {
       @include flexContainer(column, center, center, 8px);
+      @include indents(10px, 0);
       width: 100%;
     }
   }
@@ -28,6 +29,10 @@
   &__inputWrapper {
     @include indents(40px 0 20px 0, 0);
     width: 100%;
+
+    @media screen and (max-width: 580px) {
+      @include indents(10px, 0);
+    }
   }
 
   &__input {

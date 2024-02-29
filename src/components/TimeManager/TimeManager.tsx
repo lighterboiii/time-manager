@@ -142,7 +142,6 @@ const TimeManager: FC = () => {
         <Button
           text="Старт/Стоп"
           handleClick={handleStart}
-          type="submit"
         />
         <Button
           text="Переключить таймер"
