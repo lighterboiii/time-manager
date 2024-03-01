@@ -10,7 +10,10 @@ const TimeManager: FC = () => {
   const [secondTimer, setSecondTimer] = useState<NodeJS.Timeout | null>(null);
   const [firstTimerTime, setFirstTimerTime] = useState<number | null>(null);
   const [secondTimerTime, setSecondTimerTime] = useState<number | null>(null);
-  const [isPaused, setIsPaused] = useState(false);
+  const [isPaused, setIsPaused] = useState({
+    firstTimerPaused: false,
+    secondTimerPaused: false,
+  });
   const [timerSwitchedMessageVisible, setTimerSwitchedMessageVisible] = useState(false);
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -19,9 +22,6 @@ const TimeManager: FC = () => {
 
   const handleSwitchTimer = () => {
     setCurrentTimer(prevTimer => prevTimer === 1 ? 2 : 1);
-    setFirstTimer(null);
-    setSecondTimer(null);
-    setIsPaused(false);
     setTimerSwitchedMessageVisible(true);
     setTimeout(() => {
       setTimerSwitchedMessageVisible(false);
@@ -59,6 +59,10 @@ const TimeManager: FC = () => {
       setFirstTimerTime(null);
       setSecondTimerTime(null);
       setCurrentTimer(1);
+      setIsPaused({
+        firstTimerPaused: false,
+        secondTimerPaused: false,
+      });
       localStorage.clear();
     }
   };
@@ -71,28 +75,28 @@ const TimeManager: FC = () => {
 
   const handlePause = () => {
     if (currentTimer === 1) {
-      if (!isPaused && firstTimer) {
+      if (!isPaused.firstTimerPaused && firstTimer) {
         clearInterval(firstTimer);
-        setIsPaused(true);
-        setFirstTimerTime(firstTimerTime);
+        setIsPaused(prevState => ({ ...prevState, firstTimerPaused: true }));
       } else {
         setFirstTimer(setInterval(() => {
           setFirstTimerTime((prevTime) => (prevTime !== null ? prevTime - 1 : null));
         }, 1000));
-        setIsPaused(false);
+        setIsPaused(prevState => ({ ...prevState, firstTimerPaused: false }));
       }
     } else {
-      if (secondTimer && !isPaused) {
+      if (secondTimer && !isPaused.secondTimerPaused) {
         clearInterval(secondTimer);
-        setIsPaused(true);
+        setIsPaused(prevState => ({ ...prevState, secondTimerPaused: true }));
       } else {
         setSecondTimer(setInterval(() => {
           setSecondTimerTime((prevTime) => (prevTime !== null ? prevTime - 1 : null));
         }, 1000));
-        setIsPaused(false);
+        setIsPaused(prevState => ({ ...prevState, secondTimerPaused: false }));
       }
     }
   };
+  
 
   useEffect(() => {
     const firstTimerStore = localStorage.getItem('timer1Time');
@@ -127,8 +131,12 @@ const TimeManager: FC = () => {
         <div className={styles.timeManager__alert}>
           {currentTimer === 1 ? 'Первый таймер включен' : 'Второй таймер включен'}
         </div>}
-      {currentTimer === 1 && firstTimerTime !== null && <Timer time={firstTimerTime} isPaused={isPaused} />}
-      {currentTimer === 2 && secondTimerTime !== null && <Timer time={secondTimerTime} isPaused={isPaused} />}
+        {((isPaused.firstTimerPaused && currentTimer === 1)  || (isPaused.secondTimerPaused && currentTimer === 2 )) &&
+        <div className={styles.timeManager__pause}>
+          Пауза
+        </div>}
+      {currentTimer === 1 && firstTimerTime !== null && <Timer time={firstTimerTime} isPaused={isPaused.firstTimerPaused} />}
+      {currentTimer === 2 && secondTimerTime !== null && <Timer time={secondTimerTime} isPaused={isPaused.secondTimerPaused} />}
       {(firstTimerTime === null && secondTimerTime === null) &&
         <div className={styles.timeManager__infoText}>
           В поле ввода введите минуты для отсчета и нажмите кнопку "Старт/Cтоп" для запуска таймера
